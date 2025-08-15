@@ -94,4 +94,6 @@ QAGuruDD
 
 allure_report/
 allure_results/
+
+Test.xcresult/
 *.xcresult
