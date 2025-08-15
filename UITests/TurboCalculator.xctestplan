@@ -26,13 +26,16 @@
       "selectedTests" : [
         "UITestsLaunchTests\/testAC()",
         "UITestsLaunchTests\/testDebugTree()",
+        "UITestsLaunchTests\/testDivideByZero()",
         "UITestsLaunchTests\/testFail()",
+        "UITestsLaunchTests\/testMultiply()",
         "UITestsLaunchTests\/testRecorded()",
         "UITestsLaunchTests\/testSafari()",
         "UITestsLaunchTests\/testScreenshot()",
         "UITestsLaunchTests\/testSkip()",
         "UITestsLaunchTests\/testSum9()",
-        "UITestsLaunchTests\/testSum9Faster()"
+        "UITestsLaunchTests\/testSum9Faster()",
+        "UITestsLaunchTests\/testSumDecimal()"
       ],
       "target" : {
         "containerPath" : "container:TurboCalculator.xcodeproj",

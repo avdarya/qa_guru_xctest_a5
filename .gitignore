@@ -91,3 +91,7 @@ iOSInjectionProject/
 **.DS_Store
 Report
 QAGuruDD
+
+allure_report/
+allure_results/
+*.xcresult
