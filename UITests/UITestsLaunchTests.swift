@@ -89,13 +89,13 @@ final class UITestsLaunchTests: XCTestCase {
     
     func testSumDecimal() throws {
         app.launch()
-        app.buttons["OneButton"].tap()
+        app.buttons["1"].tap()
         app.buttons["."].tap()
-        app.buttons["OneButton"].tap()
+        app.buttons["1"].tap()
         app.buttons["+"].tap()
-        app.buttons["TwoButton"].tap()
+        app.buttons["2"].tap()
         app.buttons["."].tap()
-        app.buttons["ThreeButton"].tap()
+        app.buttons["3"].tap()
         app.buttons["="].tap()
         
         XCTAssertEqual(app.staticTexts["CurrentText"].label, "1.1+2.3")
@@ -104,10 +104,10 @@ final class UITestsLaunchTests: XCTestCase {
     
     func testMultiply() throws {
         app.launch()
-        app.buttons["OneButton"].tap()
+        app.buttons["1"].tap()
         app.buttons["ZeroButton"].tap()
         app.buttons["x"].tap()
-        app.buttons["ThreeButton"].tap()
+        app.buttons["3"].tap()
         app.buttons["="].tap()
         
         XCTAssertEqual(app.staticTexts["CurrentText"].label, "10*3")
