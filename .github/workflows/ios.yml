@@ -65,13 +65,13 @@ jobs:
 
           FULL_NAME="${DEVICE_INPUT} (iOS ${IOS_VER})"
 
-          LINE=$(xcrun simctl list devices "iOS ${IOS_VER}" | grep -E "^[[:space:]]*${DEVICE_INPUT} ")
+          LINE=$(xcrun simctl list devices "iOS ${IOS_VER}" | grep -E "^[[:space:]]*${DEVICE_INPUT} \(" | head -n1)
           if [[ -z "${LINE}" ]]; then
             echo "❌ Simulator '${DEVICE_INPUT} (iOS ${IOS_VER})' not found"
             exit 1
           fi
 
-          UDID=$(echo "$LINE" | awk -F '[()]' '{print $2}')
+          UDID=$(echo "${LINE}" | awk -F '[()]' '{print $2}')
 
           echo "✅ Chosen: ${FULL_NAME}  UDID=${UDID}"
           echo "simulator_id=$UDID" >> "$GITHUB_OUTPUT"
