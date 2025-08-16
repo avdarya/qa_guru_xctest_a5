@@ -53,6 +53,8 @@ jobs:
             echo "$MSG"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
+      - name: Show simulators
+        run: xcrun simctl list devices available
       - name: Pick simulator by Device + OS
         id: pick
         shell: bash
@@ -73,8 +75,6 @@ jobs:
 
           echo "✅ Chosen: ${FULL_NAME}  UDID=${UDID}"
           echo "simulator_id=$UDID" >> "$GITHUB_OUTPUT"
-      - name: Show simulators
-        run: xcrun simctl list devices available
       - name: Build iOS app
         run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id }}" fastlane ios app_build
       - name: Run all UI-tests
