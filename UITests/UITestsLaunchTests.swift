@@ -77,10 +77,10 @@ final class UITestsLaunchTests: XCTestCase {
         try XCTSkipIf(true, "Так нужно")
     }
     
-    func testFail() throws {
-        app.launch()
-        XCTFail("Очень нужно!")
-    }
+    // func testFail() throws {
+    //     app.launch()
+    //     XCTFail("Очень нужно!")
+    // }
     
     func testSafari() throws {
         safari.launch()
@@ -111,7 +111,7 @@ final class UITestsLaunchTests: XCTestCase {
         app.buttons["="].tap()
         
         XCTAssertEqual(app.staticTexts["CurrentText"].label, "10*3")
-        XCTAssert(app.buttons["resultString"].staticTexts["30"].exists)
+        XCTAssert(app.buttons["resultString"].staticTexts["300"].exists)
     }
     
     func testDivideByZero() throws {
