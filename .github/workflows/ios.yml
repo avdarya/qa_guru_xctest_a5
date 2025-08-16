@@ -57,6 +57,8 @@ jobs:
 
           echo "✅ Найден симулятор \"$SIM_NAME\" с UUID $SIM_ID"
           echo "simulator_id=$SIM_ID" >> $GITHUB_OUTPUT
+      - name: Show simulators
+        run: xcrun simctl list devices available
       - name: Build iOS app
         run: SIMULATOR_NAME="${{ github.event.inputs.device }}" fastlane ios app_build
       - name: Run all UI-tests
