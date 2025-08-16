@@ -6,15 +6,24 @@ on:
   workflow_dispatch:
     inputs:
       device:
-        description: 'Device'
+        description: 'Device type'
         required: true
         default: 'iPhone 15'
         type: choice
         options:
           - iPhone 16
+          - iPhone 16 Plus
           - iPhone 16 Pro
+          - iPhone 16 Pro Max
           - iPhone 15
           - iPhone 15 Plus
+          - iPhone 15 Pro
+          - iPhone 15 Pro Max
+      ios_os:
+        description: 'iOS version (e.g. 18.6)'
+        type: string
+        required: true
+        default: '18.6'
 
 jobs:
   build:
@@ -44,25 +53,32 @@ jobs:
             echo "$MSG"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
-      - name: Check simulator ID
-        id: sim
+      - name: Pick simulator by Device + OS
+        id: pick
+        shell: bash
         run: |
-          SIM_NAME="${{ github.event.inputs.device }}"
-          SIM_ID=$(xcrun simctl list devices available | grep -F "$SIM_NAME" | grep -v unavailable | head -n 1 | awk -F '[()]' '{print $2}')
+          set -euo pipefail
+          DEVICE_INPUT="${{ github.event.inputs.device }}"
+          IOS_VER="${{ github.event.inputs.ios_os }}"
 
-          if [ -z "$SIM_ID" ]; then
-            echo "❌ Симулятор \"$SIM_NAME\" не найден или недоступен"
+          FULL_NAME="${DEVICE_INPUT} (iOS ${IOS_VER})"
+
+          LINE=$(xcrun xctrace list devices 2>/dev/null | grep -E "^[[:space:]]*${DEVICE_INPUT} \(iOS ${IOS_VER}\) ") || true
+          if [[ -z "${LINE}" ]]; then
+            echo "❌ Simulator '${FULL_NAME}' not found. Проверьте установленный runtime/устройство в Xcode." >&2
             exit 1
           fi
 
-          echo "✅ Найден симулятор \"$SIM_NAME\" с UUID $SIM_ID"
-          echo "simulator_id=$SIM_ID" >> $GITHUB_OUTPUT
+          UDID=$(echo "$LINE" | sed -E 's/.*\(([A-F0-9\-]{36})\).*/\1/i')
+
+          echo "✅ Chosen: ${FULL_NAME}  UDID=${UDID}"
+          echo "simulator_id=$UDID" >> "$GITHUB_OUTPUT"
       - name: Show simulators
         run: xcrun simctl list devices available
       - name: Build iOS app
-        run: SIMULATOR_NAME="${{ github.event.inputs.device }}" fastlane ios app_build
+        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id }}" fastlane ios app_build
       - name: Run all UI-tests
-        run: SIMULATOR_NAME="${{ github.event.inputs.device }}" fastlane ios app_test
+        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id  }}" fastlane ios app_test
       - name: Save xcresult
         if: ${{ always() }}
         uses: actions/upload-artifact@v4.3.3
