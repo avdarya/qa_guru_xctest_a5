@@ -1,8 +1,6 @@
 name: iOS sample autotests
 
 on:
-  # pull_request:
-  #   branches: ['main']
   workflow_dispatch:
     inputs:
       device:
@@ -61,8 +59,6 @@ jobs:
             echo "$MSG"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
-      - name: Show simulators
-        run: xcrun simctl list devices available
       - name: Pick simulator by Device + OS
         id: pick
         shell: bash
@@ -91,6 +87,6 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4.3.3
         with:
-          name: 'Report'
-          path: 'Report'
+          name: 'TestReport'
+          path: 'Report/*.xcresult'
           retention-days: 15
