@@ -1,14 +1,25 @@
 name: iOS sample autotests
 
 on:
-  pull_request:
-    branches: ['main']
+  # pull_request:
+  #   branches: ['main']
   workflow_dispatch:
+    inputs:
+      device:
+        description: 'Device'
+        required: true
+        default: 'iPhone 15'
+        type: choice
+        options:
+          - iPhone 16
+          - iPhone 16 Pro
+          - iPhone 15
+          - iPhone 15 Plus
 
 jobs:
   build:
     name: Build and Test default scheme using any available iPhone simulator
-    runs-on: qaguru
+    runs-on: [self-hosted, macOS, ARM64, qaguru]
 
     steps:
       - name: Get current environment
@@ -33,10 +44,23 @@ jobs:
             echo "$MSG"
             echo "\`\`\`"
           } >> "$GITHUB_STEP_SUMMARY"
+      - name: Check simulator ID
+        id: sim
+        run: |
+          SIM_NAME="${{ github.event.inputs.device }}"
+          SIM_ID=$(xcrun simctl list devices available | grep -F "$SIM_NAME" | grep -v unavailable | head -n 1 | awk -F '[()]' '{print $2}')
+
+          if [ -z "$SIM_ID" ]; then
+            echo "❌ Симулятор \"$SIM_NAME\" не найден или недоступен"
+            exit 1
+          fi
+
+          echo "✅ Найден симулятор \"$SIM_NAME\" с UUID $SIM_ID"
+          echo "simulator_id=$SIM_ID" >> $GITHUB_OUTPUT
       - name: Build iOS app
-        run: fastlane ios app_build
+        run: SIMULATOR_NAME="${{ github.event.inputs.device }}" fastlane ios app_build
       - name: Run all UI-tests
-        run: fastlane ios app_test
+        run: SIMULATOR_NAME="${{ github.event.inputs.device }}" fastlane ios app_test
       - name: Save xcresult
         if: ${{ always() }}
         uses: actions/upload-artifact@v4.3.3
