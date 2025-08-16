@@ -2,7 +2,7 @@ name: iOS sample autotests
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
   workflow_dispatch:
 
 jobs:
@@ -15,6 +15,24 @@ jobs:
         run: env
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Commit message -> Job Summary
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            SHA="${{ github.sha }}"
+          fi
+
+          MSG="$(git show -s --format=%B "$SHA")"
+
+          {
+            echo "## Commit message"
+            echo
+            echo "\`\`\`"
+            echo "$MSG"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Build iOS app
         run: fastlane ios app_build
       - name: Run all UI-tests
@@ -25,4 +43,4 @@ jobs:
         with:
           name: 'Report'
           path: 'Report'
-          retention-days: 15       
+          retention-days: 15
