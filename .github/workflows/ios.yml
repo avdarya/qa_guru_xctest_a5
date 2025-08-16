@@ -24,6 +24,14 @@ on:
         type: string
         required: true
         default: '18.6'
+      test_plane:
+        description: 'Test Plan'
+        required: true
+        default: 'TurboCalculator'
+        type: choice
+        options:
+          - TurboCalculator
+          - TurboCalculatorHW
 
 jobs:
   build:
@@ -76,9 +84,9 @@ jobs:
           echo "✅ Chosen: ${FULL_NAME}  UDID=${UDID}"
           echo "simulator_id=$UDID" >> "$GITHUB_OUTPUT"
       - name: Build iOS app
-        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id }}" fastlane ios app_build
+        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id }}" TEST_PLAN="${{ inputs.test_plane }}" fastlane ios app_build
       - name: Run all UI-tests
-        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id  }}" fastlane ios app_test
+        run: SIMULATOR_ID="${{ steps.pick.outputs.simulator_id }}" TEST_PLAN="${{ inputs.test_plane }}" fastlane ios app_test
       - name: Save xcresult
         if: ${{ always() }}
         uses: actions/upload-artifact@v4.3.3

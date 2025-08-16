@@ -32,6 +32,9 @@
             reference = "container:UITests/TurboCalculator.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:UITests/TurboCalculatorHW.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

@@ -40,7 +40,8 @@ platform :ios do
       scheme: "TurboCalculator",
       reset_simulator: true,
       output_directory: "Report",
-      reinstall_app: true
+      reinstall_app: true,
+      testplan: ENV['TEST_PLAN']
     )
   end
 
