@@ -65,13 +65,13 @@ jobs:
 
           FULL_NAME="${DEVICE_INPUT} (iOS ${IOS_VER})"
 
-          LINE=$(xcrun xctrace list devices 2>/dev/null | grep -E "^[[:space:]]*${DEVICE_INPUT} \(iOS ${IOS_VER}\) ") || true
+          LINE=$(xcrun simctl list devices "iOS ${IOS_VER}" | grep -E "^[[:space:]]*${DEVICE_INPUT} ")
           if [[ -z "${LINE}" ]]; then
-            echo "❌ Simulator '${FULL_NAME}' not found. Проверьте установленный runtime/устройство в Xcode." >&2
+            echo "❌ Simulator '${DEVICE_INPUT} (iOS ${IOS_VER})' not found"
             exit 1
           fi
 
-          UDID=$(echo "$LINE" | sed -E 's/.*\(([A-F0-9\-]{36})\).*/\1/i')
+          UDID=$(echo "$LINE" | awk -F '[()]' '{print $2}')
 
           echo "✅ Chosen: ${FULL_NAME}  UDID=${UDID}"
           echo "simulator_id=$UDID" >> "$GITHUB_OUTPUT"
